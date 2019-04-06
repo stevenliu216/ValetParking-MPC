@@ -8,6 +8,9 @@ class vehicle_state:
         self.v = v
         self.phi = phi
 
+    def print_state(self):
+        print("State: ", self.x, self.y, self.v, self.phi)
+
 class control_input:
     '''Represents the control input'''
     def __init__(self, a, delta):
