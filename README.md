@@ -14,4 +14,4 @@ pytest
 ```
 
 ## Diagram
-[Diagram](doc/diagram.png)
+![Diagram](doc/diagram.png)
