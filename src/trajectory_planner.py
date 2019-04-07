@@ -3,7 +3,7 @@
 import numpy as np
 import math
 
-from spline_interpolation import *
+from .spline_interpolation import *
 
 def generate_trajectory(xlist, ylist):
     '''Returns a reference trajectory (x, y, phi, k)

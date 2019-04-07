@@ -1,5 +1,9 @@
 '''Define a spline/spline2D class for generating trajectories'''
 
+import numpy as np
+import math
+import bisect
+
 class Spline:
     '''Cubic Spline interpolation'''
     def __init__(self, x, y):
@@ -134,7 +138,7 @@ class Spline2D:
         return x, y
 
     def calc_curvature(self, s):
-        dx = self.sx.cald(s)
+        dx = self.sx.calcd(s)
         ddx = self.sx.calcdd(s)
         dy = self.sy.calcd(s)
         ddy = self.sy.calcdd(s)
