@@ -21,3 +21,12 @@ def generate_trajectory(xlist, ylist):
         rphi.append(sp.calc_phi(index))
         rk.append(sp.calc_curvature(index))
     return rx, ry, rphi, rk
+
+def generate_speed_profile(rx, ry, rphi, target_speed):
+    return [target_speed] * len(rx)
+
+def calc_ref_trajectory():
+    pass
+
+def calc_nearest_index():
+    pass
