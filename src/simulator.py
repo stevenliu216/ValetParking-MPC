@@ -6,8 +6,15 @@ from .trajectory_planner import *
 from .mpc import *
 from .util import *
 
-def update_state(state):
-    return state
+def update_vehicle_state(vehicle_state, a, delta):
+    '''Update Vehicle State based on vehicle model'''
+    # Does the order matter here? should v be updated first? -> v, phi, x, y for example?
+    vehicle_state.x = vehicle_state.x + v * math.cos(vehicle_state.phi) * dt
+    vehicle_state.y = vehicle_state.y + v * math.sin(vehicle_state.phi) * dt
+    vehicle_state.v = vehicle_state.v + a * dt
+    vehicle_state.phi = vehicle_state.phi + (v * math.tan(delta) / L) * dt
+
+    return vehicle_state
 
 def check_goal(goal):
     return False
