@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .trajectory_planner import *
+from .path_planner import *
 from .mpc import *
 from .util import *
 
@@ -12,13 +12,13 @@ def update_state(state):
 def check_goal(goal):
     return False
 
-def simulate(rx, ry, rphi, rv, speed, dl):
+def simulate(test_track, speed, dl):
     '''
     inputs:
-    rx: reference x
-    ry: reference y
-    rphi: reference phi
-    rv: reference v
+    test_track: [0] is x
+                [1] is y
+                [2] is phi
+                [3] is v
     speed: speed profile
     dl: tick [m]
 
@@ -36,19 +36,20 @@ def simulate(rx, ry, rphi, rv, speed, dl):
     DT = 0.1 # 100 ms time loop
     MAX_TIME = 500.0 # max simulation time
 
-    calc_nearest_index()
-    # smooth_yaw -> Don't do for now
-
     # Initialize the state
-    state = vehicle_state(rx[0], ry[0], rv[0], rphi[0])
-    goal = [rx[-1], ry[-1]]
+    state = vehicle_state(test_track[0], test_track[0], test_track[0], test_track[0])
+    goal = [test_track[-1], test_track[-1]]
+    
+    path_planner = PathPlanner(state, test_track, speed, 0)
+    path_planner.index = path_planner.calc_nearest_index()
+    # smooth_yaw -> Don't do for now
 
     # time loop
     time = 0.0
     
     while (time <= MAX_TIME):
         # calc_ref_trajectory every time loop
-        calc_ref_trajectory()
+        path_planner.calc_ref_trajectory()
         # iterative linear mpc every time loop
         linear_mpc()
         # update state every time loop
@@ -60,7 +61,6 @@ def simulate(rx, ry, rphi, rv, speed, dl):
             break
 
         # increment time
-        print(time)
         time += DT
     
     t, x, y, phi, v, a, delta = [], [], [], [], [], [], []
