@@ -6,15 +6,21 @@ from .trajectory_planner import *
 from .mpc import *
 from .util import *
 
-def update_vehicle_state(vehicle_state, a, delta):
-    '''Update Vehicle State based on vehicle model'''
-    # Does the order matter here? should v be updated first? -> v, phi, x, y for example?
-    vehicle_state.x = vehicle_state.x + v * math.cos(vehicle_state.phi) * dt
-    vehicle_state.y = vehicle_state.y + v * math.sin(vehicle_state.phi) * dt
-    vehicle_state.v = vehicle_state.v + a * dt
-    vehicle_state.phi = vehicle_state.phi + (v * math.tan(delta) / L) * dt
+def update_vehicle_state(state, a, delta):
+    '''Update Vehicle State based on mpc control output'''
+    
+    state.v = state.v + a * dt
+    # Limit vehicle speed to plausible max/min
+    state.v = max(min(state.v, max_v), min_v)
 
-    return vehicle_state
+    # Limit steering angle to maximum value
+    delta = max(min(delta, max_delta), -min_delta)
+    state.phi = state.phi + (state.v * math.tan(delta) / L) * dt
+    
+    state.x = state.x + vehicle_state.v * math.cos(vehicle_state.phi) * dt
+    state.y = state.y + state.v * math.sin(vehicle_state.phi) * dt
+
+    return state
 
 def check_goal(goal):
     return False
