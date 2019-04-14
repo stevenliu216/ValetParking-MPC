@@ -3,6 +3,8 @@
 import numpy as np
 import math
 
+from .parameters import DT, T, dl
+
 class PathPlanner:
     def __init__(self, state, test_track, speed, index):
         self.state = state
@@ -14,13 +16,9 @@ class PathPlanner:
         self.index = index
 
         self.xref = None
-        self.DT = 0.1
-        self.T = 5
-        self.dl = 1
     
     def calc_ref_trajectory(self):
         '''Simulates an online path planner by returning x_ref'''
-        T = self.T
         xref = np.zeros((4, T+1))
         dref = np.zeros((1, T+1))
         n = len(self.cx)
@@ -37,8 +35,8 @@ class PathPlanner:
 
         travel = 0.0
         for i in range(T+1):
-            travel += abs(self.state.v) * self.DT
-            dind = int(round(travel / self.dl))
+            travel += abs(self.state.v) * DT
+            dind = int(round(travel / dl))
 
             if (ind + dind) < n:
                 xref[0, i] = self.cx[ind + dind]
