@@ -37,7 +37,7 @@ def simulate(test_track, speed, dl):
     MAX_TIME = 500.0 # max simulation time
 
     # Initialize the state
-    state = vehicle_state(test_track[0], test_track[0], test_track[0], test_track[0])
+    state = vehicle_state(test_track[0][0], test_track[0][0], test_track[0][0], test_track[0][0])
     goal = [test_track[-1], test_track[-1]]
     
     path_planner = PathPlanner(state, test_track, speed, 0)

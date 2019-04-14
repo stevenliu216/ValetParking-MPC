@@ -25,7 +25,7 @@ class PathPlanner:
         dref = np.zeros((1, T+1))
         n = len(self.cx)
 
-        ind, _ = self.calc_nearest_index()
+        ind = self.calc_nearest_index()
         if self.index >= ind:
             ind = self.index
 
