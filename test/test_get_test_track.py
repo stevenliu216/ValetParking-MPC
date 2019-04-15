@@ -1,4 +1,4 @@
-from src.trajectory_planner import generate_trajectory
+from src.util import get_test_track
 
 import math
 
@@ -10,7 +10,7 @@ def test_spline_straight():
     ylist = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     # result is a tuple of 4 lists
-    result = generate_trajectory(xlist, ylist)
+    result = get_test_track(xlist, ylist)
     assert(len(result[0])==50)
     assert(result[0] == [_ for _ in range(0, 50)])
 
@@ -18,11 +18,11 @@ def test_spline_parking():
     '''Picked waypoints that resemble a parking lot'''
     xlist = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
     ylist = [0.0, 0.0, 0.5, 1.0, 3.0, 5.0, 8.0]
-    result = generate_trajectory(xlist, ylist)
+    result = get_test_track(xlist, ylist)
 
     xlist2 = [6.0, 5.2, 5.0, 5.0, 5.0, 5.0]
     ylist2 = [8.0, 3.0, 0.0, -1.0, -2.0, -3.0]
-    result2 = generate_trajectory(xlist2, ylist2)
+    result2 = get_test_track(xlist2, ylist2)
 
     result[0].extend(result2[0])
     result[1].extend(result2[1])
