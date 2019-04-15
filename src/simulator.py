@@ -34,8 +34,8 @@ def simulate(test_track, speed, dl):
     '''
 
     # Initialize the state
-    state = vehicle_state(test_track[0][0], test_track[0][0], test_track[0][0], test_track[0][0])
-    goal = [test_track[-1], test_track[-1]]
+    state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])
+    goal = [test_track[0][-1], test_track[1][-1]]
     
     path_planner = PathPlanner(state, test_track, speed, 0)
     path_planner.index = path_planner.calc_nearest_index()

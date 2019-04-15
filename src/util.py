@@ -48,7 +48,7 @@ def generate_speed_profile(test_track, target_speed):
         move_direction = math.atan2(dy, dx)
 
         if dx != 0.0 and dy != 0.0:
-            dangle = abs(move_direction - test_track[3][i])
+            dangle = abs(pi2pi(move_direction - test_track[2][i]))
             if dangle >= math.pi / 4.0:
                 direction = -1.0
             else:
@@ -58,5 +58,17 @@ def generate_speed_profile(test_track, target_speed):
             speed_profile[i] = -target_speed
         else:
             speed_profile[i] = target_speed
+    
+    speed_profile[-1] = 0.0
 
     return speed_profile
+
+def pi2pi(angle):
+    '''Helper function makes sure angle is -pi to pi'''
+    while(angle > math.pi):
+        angle = angle - 2.0 * math.pi
+
+    while(angle < -math.pi):
+        angle = angle + 2.0 * math.pi
+
+    return angle
