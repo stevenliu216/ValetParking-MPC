@@ -1,5 +1,6 @@
 ## MPC for Automated Valet Parking
 Our EECS 561 (Digital Controls) final project.
+[![Build Status](https://travis-ci.com/stevenliu216/EECS561-final-project.svg?token=nsybZNLKNQxgq5LiqTqf&branch=master)](https://travis-ci.com/stevenliu216/EECS561-final-project)
 
 ## Setup
 Make a python virtual environment (type `deactivate` to exit the venv):
