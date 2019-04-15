@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .parameters import DT, MAX_TIME
 from .path_planner import *
 from .mpc import *
 from .util import *
@@ -32,10 +33,6 @@ def simulate(test_track, speed, dl):
     delta: steering angle
     '''
 
-    # initialize stuff
-    DT = 0.1 # 100 ms time loop
-    MAX_TIME = 500.0 # max simulation time
-
     # Initialize the state
     state = vehicle_state(test_track[0][0], test_track[0][0], test_track[0][0], test_track[0][0])
     goal = [test_track[-1], test_track[-1]]
@@ -63,5 +60,6 @@ def simulate(test_track, speed, dl):
         # increment time
         time += DT
     
+    # book-keeping for plots
     t, x, y, phi, v, a, delta = [], [], [], [], [], [], []
     return t, x, y, phi, v, a, delta
