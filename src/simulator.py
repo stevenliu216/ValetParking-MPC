@@ -7,7 +7,20 @@ from .path_planner import *
 from .mpc import *
 from .util import *
 
-def update_state(state):
+def update_vehicle_state(state, a, delta):
+    '''Update Vehicle State based on mpc control output'''
+    
+    state.v = state.v + a * dt
+    # Limit vehicle speed to plausible max/min
+    state.v = max(min(state.v, max_v), min_v)
+
+    # Limit steering angle to maximum value
+    delta = max(min(delta, max_delta), -min_delta)
+    state.phi = state.phi + (state.v * math.tan(delta) / L) * dt
+    
+    state.x = state.x + vehicle_state.v * math.cos(vehicle_state.phi) * dt
+    state.y = state.y + state.v * math.sin(vehicle_state.phi) * dt
+
     return state
 
 def check_goal(goal):
