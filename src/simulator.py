@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .parameters import DT, MAX_TIME
+from .parameters import DT, MAX_TIME, SHOW_PLOTS
 from .path_planner import *
 from .mpc import *
 from .util import *
@@ -37,16 +37,21 @@ def simulate(test_track, speed, dl):
     state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])
     goal = [test_track[0][-1], test_track[1][-1]]
     
-    path_planner = PathPlanner(state, test_track, speed, 0)
-    path_planner.index = path_planner.calc_nearest_index()
+    path_planner = PathPlanner(test_track, speed, 0)
+    path_planner.index = path_planner.calc_nearest_index(state)
     # smooth_yaw -> Don't do for now
 
     # time loop
     time = 0.0
+    t = [time]
     
+    # book-keeping for plots
+    x, y, phi, v, a, delta = [], [], [], [], [], []
+
     while (time <= MAX_TIME):
         # calc_ref_trajectory every time loop
-        path_planner.calc_ref_trajectory()
+        xref = path_planner.calc_ref_trajectory(state)
+
         # iterative linear mpc every time loop
         linear_mpc()
         # update state every time loop
@@ -59,7 +64,6 @@ def simulate(test_track, speed, dl):
 
         # increment time
         time += DT
+        t.append(time)
     
-    # book-keeping for plots
-    t, x, y, phi, v, a, delta = [], [], [], [], [], [], []
     return t, x, y, phi, v, a, delta

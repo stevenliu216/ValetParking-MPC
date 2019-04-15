@@ -6,8 +6,7 @@ import math
 from .parameters import DT, T, dl
 
 class PathPlanner:
-    def __init__(self, state, test_track, speed, index):
-        self.state = state
+    def __init__(self, test_track, speed, index):
         self.cx = test_track[0]
         self.cy = test_track[1]
         self.cphi = test_track[2]
@@ -17,13 +16,13 @@ class PathPlanner:
 
         self.xref = None
     
-    def calc_ref_trajectory(self):
+    def calc_ref_trajectory(self, state):
         '''Simulates an online path planner by returning x_ref'''
         xref = np.zeros((4, T+1))
         dref = np.zeros((1, T+1))
         n = len(self.cx)
 
-        ind = self.calc_nearest_index()
+        ind = self.calc_nearest_index(state)
         if self.index >= ind:
             ind = self.index
 
@@ -35,7 +34,7 @@ class PathPlanner:
 
         travel = 0.0
         for i in range(T+1):
-            travel += abs(self.state.v) * DT
+            travel += abs(state.v) * DT
             dind = int(round(travel / dl))
 
             if (ind + dind) < n:
@@ -54,10 +53,10 @@ class PathPlanner:
         self.xref = xref
         return self.xref
 
-    def calc_nearest_index(self):
+    def calc_nearest_index(self, state):
         '''Helper function for path planner. Returns nearest index'''
-        dx = [self.state.x - icx for icx in self.cx[self.index:(self.index + 10)]]
-        dy = [self.state.y - icy for icy in self.cy[self.index:(self.index + 10)]]
+        dx = [state.x - icx for icx in self.cx[self.index:(self.index + 10)]]
+        dy = [state.y - icy for icy in self.cy[self.index:(self.index + 10)]]
         d = [idx**2 + idy**2 for (idx, idy) in zip(dx, dy)]
         ind = d.index(min(d)) + self.index
 

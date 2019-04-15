@@ -2,7 +2,7 @@
 Access these by from parameters import *
 '''
 
-SHOW_PLOTS = False
+SHOW_PLOTS = True
 
 T = 5       # horizon length
 DT = 0.2    # time increment
