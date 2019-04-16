@@ -60,4 +60,9 @@ class PathPlanner:
         d = [idx**2 + idy**2 for (idx, idy) in zip(dx, dy)]
         ind = d.index(min(d)) + self.index
 
-        return ind        
+        return ind
+
+    def distance_to_go(self, state):
+        '''Calculate the # of course ticks left from current state to the goal'''
+        ind = self.calc_nearest_index(state)
+        return len(self.cx[ind:])

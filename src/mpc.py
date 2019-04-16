@@ -2,14 +2,14 @@
 import cvxpy
 import numpy as np
 
-from util import *
-
+from .util import *
+from .parameters import T, DT
 
 #### Driving Cost Matrices ####
-Q = np.diag(1.0, 1.0, 1.0, 1.0) # State Cost Matrix
+Q = np.diag([1.0, 1.0, 1.0, 1.0]) # State Cost Matrix
 Qf = Q # Final State Cost Matrix
-R = np.diag(1.0, 1.0) # Control Input Cost Matrix
-Rd = np.diag(1.0, 1.0) # Control Input Difference Cost Matrix
+R = np.diag([1.0, 1.0]) # Control Input Cost Matrix
+Rd = np.diag([1.0, 1.0]) # Control Input Difference Cost Matrix
 
 #### Parking Cost Matrices ####
 
@@ -37,7 +37,7 @@ def predict_motion(z0, opt_a, opt_d, zref):
 def linear_mpc():
     """ Linear MPC"""
     pass
-
+'''
     z = cvxpy.Variable((n, T + 1))
     u = cvxpy.Variable((m, T))
 
@@ -78,3 +78,4 @@ def linear_mpc():
         
 
     return opt_control, opt_state
+'''

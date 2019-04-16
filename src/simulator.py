@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .parameters import DT, MAX_TIME, SHOW_PLOTS
+from .parameters import *
 from .path_planner import *
 from .mpc import *
 from .util import *
@@ -10,16 +10,16 @@ from .util import *
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
     
-    state.v = state.v + a * dt
+    state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
-    state.v = max(min(state.v, max_v), min_v)
+    state.v = max(min(state.v, MAX_V), MIN_V)
 
     # Limit steering angle to maximum value
-    delta = max(min(delta, max_delta), -min_delta)
-    state.phi = state.phi + (state.v * math.tan(delta) / L) * dt
+    delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
+    state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
     
-    state.x = state.x + vehicle_state.v * math.cos(vehicle_state.phi) * dt
-    state.y = state.y + state.v * math.sin(vehicle_state.phi) * dt
+    state.x = state.x + state.v * math.cos(state.phi) * DT
+    state.y = state.y + state.v * math.sin(state.phi) * DT
 
     return state
 
@@ -68,7 +68,9 @@ def simulate(test_track, speed, dl):
         # iterative linear mpc every time loop
         linear_mpc()
         # update state every time loop
-        state = update_state(state)
+        a = 0.5
+        delta = 0.0
+        state = update_vehicle_state(state, a, delta)
         # update the lists for book-keeping
 
         # terminate if goal is reached (checkgoal())
@@ -78,5 +80,19 @@ def simulate(test_track, speed, dl):
         # increment time
         time += DT
         t.append(time)
-    
+        x.append(state.x)
+        y.append(state.y)
+        v.append(state.v)
+        phi.append(state.phi)
+
+        if SHOW_PLOTS:
+            plt.figure(3)
+            plt.plot(test_track[0], test_track[1], "-b", label="track")
+            plt.plot(x, y, "-m", label="traj")
+            plt.plot(xref[0, :], xref[1, :], "ro", label="xref")
+            plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "gx", label="target")
+            plt.axis("equal")
+            plt.pause(0.001)
+            
+
     return t, x, y, phi, v, a, delta
