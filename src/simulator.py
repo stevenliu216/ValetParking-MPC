@@ -2,23 +2,37 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from .trajectory_planner import *
+from .parameters import *
+from .path_planner import *
 from .mpc import *
 from .util import *
 
-def update_state(state):
+def update_vehicle_state(state, a, delta):
+    '''Update Vehicle State based on mpc control output'''
+    
+    state.v = state.v + a * DT
+    # Limit vehicle speed to plausible max/min
+    state.v = max(min(state.v, MAX_V), MIN_V)
+
+    # Limit steering angle to maximum value
+    delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
+    state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
+    
+    state.x = state.x + state.v * math.cos(state.phi) * DT
+    state.y = state.y + state.v * math.sin(state.phi) * DT
+
     return state
 
 def check_goal(goal):
     return False
 
-def simulate(rx, ry, rphi, rv, speed, dl):
+def simulate(test_track, speed, dl):
     '''
     inputs:
-    rx: reference x
-    ry: reference y
-    rphi: reference phi
-    rv: reference v
+    test_track: [0] is x
+                [1] is y
+                [2] is phi
+                [3] is v
     speed: speed profile
     dl: tick [m]
 
@@ -32,27 +46,31 @@ def simulate(rx, ry, rphi, rv, speed, dl):
     delta: steering angle
     '''
 
-    # initialize stuff
-    DT = 0.1 # 100 ms time loop
-    MAX_TIME = 500.0 # max simulation time
-
-    calc_nearest_index()
-    # smooth_yaw -> Don't do for now
-
     # Initialize the state
-    state = vehicle_state(rx[0], ry[0], rv[0], rphi[0])
-    goal = [rx[-1], ry[-1]]
+    state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])
+    goal = [test_track[0][-1], test_track[1][-1]]
+    
+    path_planner = PathPlanner(test_track, speed, 0)
+    path_planner.index = path_planner.calc_nearest_index(state)
+    # smooth_yaw -> Don't do for now
 
     # time loop
     time = 0.0
+    t = [time]
     
+    # book-keeping for plots
+    x, y, phi, v, a, delta = [], [], [], [], [], []
+
     while (time <= MAX_TIME):
         # calc_ref_trajectory every time loop
-        calc_ref_trajectory()
+        xref = path_planner.calc_ref_trajectory(state)
+
         # iterative linear mpc every time loop
-        linear_mpc()
+        #linear_mpc()
         # update state every time loop
-        state = update_state(state)
+        a = 0.5
+        delta = 0.0
+        state = update_vehicle_state(state, a, delta)
         # update the lists for book-keeping
 
         # terminate if goal is reached (checkgoal())
@@ -60,8 +78,26 @@ def simulate(rx, ry, rphi, rv, speed, dl):
             break
 
         # increment time
-        print(time)
         time += DT
-    
-    t, x, y, phi, v, a, delta = [], [], [], [], [], [], []
+        t.append(time)
+        x.append(state.x)
+        y.append(state.y)
+        v.append(state.v)
+        phi.append(state.phi)
+
+        if SHOW_PLOTS:
+            plt.subplot(2,2,3)
+            plt.plot(test_track[0], test_track[1], "-b", label="track")
+            plt.plot(x, y, "-m", label="traj")
+            plt.plot(xref[0, :], xref[1, :], "ro", label="xref")
+            plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "gx", label="target")
+            plt.axis("equal")
+            plt.pause(0.001)
+
+            plt.subplot(2,2,4)
+            plt.plot(v, '-r')
+            plt.plot(speed, '-b')
+            plt.pause(0.001)
+            
+
     return t, x, y, phi, v, a, delta
