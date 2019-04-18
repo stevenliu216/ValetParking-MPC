@@ -4,12 +4,15 @@ import matplotlib.pyplot as plt
 
 from .parameters import *
 from .path_planner import *
-from .mpc import *
+from .mpc import linear_mpc, predict_motion
 from .util import *
 
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
-    
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(state.v)
+    print(a)
+
     state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
     state.v = max(min(state.v, MAX_V), MIN_V)
@@ -49,6 +52,7 @@ def simulate(test_track, speed, dl):
     # Initialize the state
     state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])
     goal = [test_track[0][-1], test_track[1][-1]]
+    opt_control = control_input(a=0.0, delta=0.0)
     
     path_planner = PathPlanner(test_track, speed, 0)
     path_planner.index = path_planner.calc_nearest_index(state)
@@ -59,17 +63,22 @@ def simulate(test_track, speed, dl):
     t = [time]
     
     # book-keeping for plots
-    x, y, phi, v, a, delta = [], [], [], [], [], []
+    x, y, phi, v = [], [], [], []
+    a = 0.0
+    delta = 0.0
 
     while (time <= MAX_TIME):
         # calc_ref_trajectory every time loop
         xref = path_planner.calc_ref_trajectory(state)
 
+        x0 = [state.x, state.y, state.v, state.phi]
+        xbar = predict_motion(x0, a, delta, xref)
+
         # iterative linear mpc every time loop
-        #linear_mpc()
+        opt_control, opt_state = linear_mpc(xref, xbar, x0, 0.0)
         # update state every time loop
-        a = 0.5
-        delta = 0.0
+        a = opt_control.a[0]
+        delta = opt_control.delta[0]
         state = update_vehicle_state(state, a, delta)
         # update the lists for book-keeping
 
