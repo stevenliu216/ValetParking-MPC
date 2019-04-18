@@ -9,10 +9,6 @@ from .util import *
 
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print(state.v)
-    print(a)
-
     state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
     state.v = max(min(state.v, MAX_V), MIN_V)
@@ -30,25 +26,6 @@ def check_goal(goal):
     return False
 
 def simulate(test_track, speed, dl):
-    '''
-    inputs:
-    test_track: [0] is x
-                [1] is y
-                [2] is phi
-                [3] is v
-    speed: speed profile
-    dl: tick [m]
-
-    returns:
-    t: time (list for plotting)
-    x: x position
-    y: y position
-    phi: heading
-    v: velocity
-    a: acceleration
-    delta: steering angle
-    '''
-
     # Initialize the state
     state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])
     goal = [test_track[0][-1], test_track[1][-1]]
