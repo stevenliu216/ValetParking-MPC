@@ -66,7 +66,7 @@ def simulate(test_track, speed, dl):
         xref = path_planner.calc_ref_trajectory(state)
 
         # iterative linear mpc every time loop
-        linear_mpc()
+        #linear_mpc()
         # update state every time loop
         a = 0.5
         delta = 0.0
@@ -86,12 +86,17 @@ def simulate(test_track, speed, dl):
         phi.append(state.phi)
 
         if SHOW_PLOTS:
-            plt.figure(3)
+            plt.subplot(2,2,3)
             plt.plot(test_track[0], test_track[1], "-b", label="track")
             plt.plot(x, y, "-m", label="traj")
             plt.plot(xref[0, :], xref[1, :], "ro", label="xref")
             plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "gx", label="target")
             plt.axis("equal")
+            plt.pause(0.001)
+
+            plt.subplot(2,2,4)
+            plt.plot(v, '-r')
+            plt.plot(speed, '-b')
             plt.pause(0.001)
             
 

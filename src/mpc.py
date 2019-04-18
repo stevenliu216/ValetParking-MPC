@@ -1,9 +1,11 @@
 '''Model Predictive Controller'''
+import math
 import cvxpy
 import numpy as np
+from scipy.linalg import expm
 
 from .util import *
-from .parameters import T, DT
+from .parameters import *
 
 #### Driving Cost Matrices ####
 Q = np.diag([1.0, 1.0, 1.0, 1.0]) # State Cost Matrix
@@ -12,6 +14,38 @@ R = np.diag([1.0, 1.0]) # Control Input Cost Matrix
 Rd = np.diag([1.0, 1.0]) # Control Input Difference Cost Matrix
 
 #### Parking Cost Matrices ####
+
+
+
+def linearize_kinematics_model_approx(v, phi, delta):
+    ''' Linearize and Discritize the Kinematics Vehicle Model '''
+
+    A = np.zeros((n,n))
+    B = np.zeros((n,m))
+    C = np.zeros(n)
+
+    # Calculate A Matrix
+    A[0,0] = 1.0
+    A[0,2] = math.cos(phi) * dt
+    A[0,3] = -v * math.sin(phi) * dt
+    A[1,1] = 1.0
+    A[1,2] = math.sin(phi) * dt
+    A[1,3] = v * math.cos(phi) * dt
+    A[2,2] = 1.0
+    A[3,2] = math.tan(delta) * dt / L
+    A[3,3] = 1.0
+    
+    # Calculate B Matrix
+    B[2,0] = dt
+    B[3,1] = v * dt / (L * math.cos(delta)**2)
+
+    # Calculate C Matrix
+    C[0] = v * phi * dt * math.sin(phi)
+    C[1] = -v * phi * dt * math.cos(phi)
+    C[3] = -v * delta * dt / (L * math.cos(delta)**2)
+
+
+    return A, B, C
 
 
 
@@ -34,7 +68,7 @@ def predict_motion(z0, opt_a, opt_d, zref):
     return zbar
 
 
-def linear_mpc():
+def linear_mpc(zref, zbar, z0, dref):
     """ Linear MPC"""
     pass
 '''
@@ -51,9 +85,15 @@ def linear_mpc():
             objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q)
         # Obj/Cost Function Term 3
         objective_func += cvxpy.quad_form(u[:,t], R)
+    
+
         # Obj/Cost Function Term 4
         if t < (T - 1):
             objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd)
+
+        A, B, C = linearize_kinematics_model_approx(zbar[2,t], zbar[3,t], dref)
+        constraint += z[:,t+1]
+    
     # Obj/Cost Function Term 2
     objective_fun += cvxpy.quad_form(zref[:,T] - x[:,T], Qf)
 
