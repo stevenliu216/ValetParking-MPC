@@ -43,6 +43,10 @@ def simulate(test_track, speed, dl):
     x, y, phi, v = [], [], [], []
     phi_ref = []
     phi_error = []
+    position_refx = []
+    position_refy = []
+    position_error = []
+
     a = 0.0
     delta = 0.0
     # temporary print
@@ -82,6 +86,9 @@ def simulate(test_track, speed, dl):
         phi.append(state.phi)
         phi_ref.append(xref[3,0])
         phi_error.append(np.linalg.norm(xref[3,0]-state.phi))
+        position_refx.append(xref[0,0])
+        position_refy.append(xref[1,0])
+        position_error.append(np.linalg.norm(np.asarray([state.x,state.y])-xref[0:2,0]))
 
         if SHOW_PLOTS:
             #plt.subplot(2,3,3)
@@ -113,8 +120,14 @@ def simulate(test_track, speed, dl):
             plt.plot(phi_error, 'k')
             plt.ylim(-1,5)
 
-    
-    ### Calculate error outside the while loop
-    ### RMSE Steering error = sqrt((phi_ref - phi)^2)
+            plt.subplot(2,3,3)
+            plt.title('Trajectory zoomed in')
+            plt.plot(x,y, "--r", label = "Actual Position")
+            plt.plot(position_refx,position_refy,"-b", label = "Reference Position")
+
+            plt.subplot(2,3,6)
+            plt.title('Trajectory RMSE')
+            plt.plot(position_error, 'k')
+
 
     return t, x, y, phi, v, a, delta
