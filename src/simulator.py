@@ -41,6 +41,8 @@ def simulate(test_track, speed, dl):
     
     # book-keeping for plots
     x, y, phi, v = [], [], [], []
+    phi_ref = []
+    phi_error = []
     a = 0.0
     delta = 0.0
     # temporary print
@@ -78,10 +80,12 @@ def simulate(test_track, speed, dl):
         y.append(state.y)
         v.append(state.v)
         phi.append(state.phi)
+        phi_ref.append(xref[3,0])
+        phi_error.append(np.linalg.norm(xref[3,0]-state.phi))
 
         if SHOW_PLOTS:
-            
-            plt.subplot(2,2,3)
+            #plt.subplot(2,3,3)
+            plt.subplot(2,3,1)
             plt.cla()
             if opt_state.x is not None:
                 plt.plot(opt_state.x, opt_state.y, "c*", label="MPC")
@@ -92,13 +96,25 @@ def simulate(test_track, speed, dl):
             plt.legend()
             plt.pause(0.001)
 
-            plt.subplot(2,2,4)
+            plt.subplot(2,3,4)
             plt.plot(v, '-r')
-            plt.plot(speed, '--b')
             plt.pause(0.001)
 
             print('MPC: \n {}, \n {}'.format(opt_state.x, opt_state.y))
             #input('press to continue..')
-            
+
+            plt.subplot(2,3,2)
+            plt.title('Steering Angle')
+            plt.plot(phi, '--r', label='steering angle')
+            plt.plot(phi_ref, '-b', label='reference angle')
+
+            plt.subplot(2,3,5)
+            plt.title('Steering Angle RMSE')
+            plt.plot(phi_error, 'k')
+            plt.ylim(-1,5)
+
+    
+    ### Calculate error outside the while loop
+    ### RMSE Steering error = sqrt((phi_ref - phi)^2)
 
     return t, x, y, phi, v, a, delta
