@@ -9,6 +9,9 @@ from .util import *
 
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
+    state.x = state.x + state.v * math.cos(state.phi) * DT
+    state.y = state.y + state.v * math.sin(state.phi) * DT
+    
     state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
     state.v = max(min(state.v, MAX_V), MIN_V)
@@ -17,9 +20,6 @@ def update_vehicle_state(state, a, delta):
     delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
     state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
     
-    state.x = state.x + state.v * math.cos(state.phi) * DT
-    state.y = state.y + state.v * math.sin(state.phi) * DT
-
     return state
 
 def check_goal(goal):
@@ -89,17 +89,16 @@ def simulate(test_track, speed, dl):
             plt.plot(x, y, "xr", label="traj")
             plt.plot(xref[0, :], xref[1, :], "xb", label="xref")
             plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "go", markersize=6, label="target")
-            plt.axis("equal")
             plt.legend()
             plt.pause(0.001)
 
             plt.subplot(2,2,4)
             plt.plot(v, '-r')
-            plt.plot(speed, '-b')
+            plt.plot(speed, '--b')
             plt.pause(0.001)
 
             print('MPC: \n {}, \n {}'.format(opt_state.x, opt_state.y))
-            input('press to continue..')
+            #input('press to continue..')
             
 
     return t, x, y, phi, v, a, delta

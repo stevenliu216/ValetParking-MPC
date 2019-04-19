@@ -11,6 +11,8 @@ from .parameters import *
 
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
+    state.x = state.x + state.v * math.cos(state.phi) * DT
+    state.y = state.y + state.v * math.sin(state.phi) * DT
     
     state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
@@ -20,9 +22,6 @@ def update_vehicle_state(state, a, delta):
     delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
     state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
     
-    state.x = state.x + state.v * math.cos(state.phi) * DT
-    state.y = state.y + state.v * math.sin(state.phi) * DT
-
     return state
 
 def linearize_kinematics_model_approx(v, phi, delta):
@@ -65,7 +64,7 @@ def predict_motion(z0, opt_a, opt_d, zref):
     zbar[:,0] = z0
 
     # update zbar with future predctions of state based on motion
-    state = vehicle_state(x=z0[0], y=z0[1], phi=z0[2], v=z0[3])
+    state = vehicle_state(x=z0[0], y=z0[1], v=z0[2], phi=z0[3])
     for i in range(1,T+1):
         state = update_vehicle_state(state, opt_a, opt_d)
         zbar[0,i] = state.x
@@ -124,6 +123,7 @@ def linear_mpc(zref, zbar, z0, dref):
     # Solved Problem Results
     if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
         #populate results
+        print('solver status: {}'.format(problem.status))
         opt_control.a = get_nparray_from_matrix(u.value[0, :])
         opt_control.delta = get_nparray_from_matrix(u.value[1, :])
         
