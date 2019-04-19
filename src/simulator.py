@@ -43,20 +43,28 @@ def simulate(test_track, speed, dl):
     x, y, phi, v = [], [], [], []
     a = 0.0
     delta = 0.0
-
+    # temporary print
+    np.set_printoptions(precision=3)
     while (time <= MAX_TIME):
+        print('\n\n\t\t\t\t\ttime: {}'.format(time))
         # calc_ref_trajectory every time loop
         xref = path_planner.calc_ref_trajectory(state)
+        print('xref: \n{}'.format(xref))
 
         x0 = [state.x, state.y, state.v, state.phi]
+        print('x0: \n{}'.format(x0))
         xbar = predict_motion(x0, a, delta, xref)
+        print('xbar: \n{}'.format(xbar))
 
         # iterative linear mpc every time loop
         opt_control, opt_state = linear_mpc(xref, xbar, x0, 0.0)
         # update state every time loop
         a = opt_control.a[0]
         delta = opt_control.delta[0]
+        print('output a,d: \n{}, {}'.format(a, delta))
         state = update_vehicle_state(state, a, delta)
+        print('updated state\n ')
+        state.print_state()
         # update the lists for book-keeping
 
         # terminate if goal is reached (checkgoal())
@@ -72,18 +80,26 @@ def simulate(test_track, speed, dl):
         phi.append(state.phi)
 
         if SHOW_PLOTS:
+            
             plt.subplot(2,2,3)
-            plt.plot(test_track[0], test_track[1], "-b", label="track")
-            plt.plot(x, y, "-m", label="traj")
-            plt.plot(xref[0, :], xref[1, :], "ro", label="xref")
-            plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "gx", label="target")
+            plt.cla()
+            if opt_state.x is not None:
+                plt.plot(opt_state.x, opt_state.y, "c*", label="MPC")
+            plt.plot(test_track[0], test_track[1], "--k", label="track")
+            plt.plot(x, y, "xr", label="traj")
+            plt.plot(xref[0, :], xref[1, :], "xb", label="xref")
+            plt.plot(test_track[0][path_planner.index], test_track[1][path_planner.index], "go", markersize=6, label="target")
             plt.axis("equal")
+            plt.legend()
             plt.pause(0.001)
 
             plt.subplot(2,2,4)
             plt.plot(v, '-r')
             plt.plot(speed, '-b')
             plt.pause(0.001)
+
+            print('MPC: \n {}, \n {}'.format(opt_state.x, opt_state.y))
+            input('press to continue..')
             
 
     return t, x, y, phi, v, a, delta

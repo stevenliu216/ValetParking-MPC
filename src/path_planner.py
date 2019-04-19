@@ -23,8 +23,14 @@ class PathPlanner:
         n = len(self.cx)
 
         ind = self.calc_nearest_index(state)
+        print('self.index: {}'.format(self.index))
+        print('ind: {}'.format(ind))
         if self.index >= ind:
             ind = self.index
+
+        self.index = ind
+        print('self.index: {}'.format(self.index))
+        print('ind: {}'.format(ind))
 
         xref[0,0] = self.cx[ind]
         xref[1,0] = self.cy[ind]

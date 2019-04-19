@@ -6,8 +6,16 @@ from src.util import *
 
 def main():
     # Step 1 - Generate a test track
+    '''
+    # Circular track
     xlist = [0.0, 60.0, 60.0, 0.0, 0.0, 30.0, 31.0]
     ylist = [0.0, 0.0, 50.0, 65.0, 30.0, 30.0, 31.0]
+    test_track = get_test_track(xlist, ylist) # test_track is [rx, ry, rphi, rk]
+    '''
+
+    # Switch back track
+    xlist = [0.0, 30.0, 6.0, 20.0, 35.0]
+    ylist = [0.0, 0.0, 20.0, 35.0, 20.0]
     test_track = get_test_track(xlist, ylist) # test_track is [rx, ry, rphi, rk]
     
     if SHOW_PLOTS:
