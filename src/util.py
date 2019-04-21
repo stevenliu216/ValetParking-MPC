@@ -34,6 +34,7 @@ def get_test_track(xlist, ylist):
         ry.append(iy)
         rphi.append(sp.calc_phi(index))
         rk.append(sp.calc_curvature(index))
+    rphi = smooth_yaw(rphi)
     return rx, ry, rphi, rk
 
 def generate_speed_profile(test_track, target_speed):
@@ -72,3 +73,18 @@ def pi2pi(angle):
         angle = angle + 2.0 * math.pi
 
     return angle
+
+def smooth_yaw(yaw):
+
+    for i in range(len(yaw) - 1):
+        dyaw = yaw[i + 1] - yaw[i]
+
+        while dyaw >= math.pi / 2.0:
+            yaw[i + 1] -= math.pi * 2.0
+            dyaw = yaw[i + 1] - yaw[i]
+
+        while dyaw <= -math.pi / 2.0:
+            yaw[i + 1] += math.pi * 2.0
+            dyaw = yaw[i + 1] - yaw[i]
+
+    return yaw

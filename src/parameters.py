@@ -18,7 +18,7 @@ MAX_DELTA = np.deg2rad(45.0)
 MAX_ACCEL = 1.0
 MAX_DSTEER = np.deg2rad(30.0)
 
-L = 2.5
+L = 2.0
 
 #### Driving Cost Matrices ####
 Q = np.diag([1.0, 1.0, 0.5, 0.5]) # State Cost Matrix

@@ -74,10 +74,11 @@ def predict_motion(z0, opt_a, opt_d, zref):
 
     return zbar
 
+
 def get_nparray_from_matrix(x):
     return np.array(x).flatten()
 
-def linear_mpc(zref, zbar, z0, dref):
+def linear_mpc(zref, zbar, z0, dref, park_flag):
     """ Linear MPC"""
     
 

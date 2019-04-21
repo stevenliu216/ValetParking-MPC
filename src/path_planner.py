@@ -10,11 +10,11 @@ class PathPlanner:
         self.cx = test_track[0]
         self.cy = test_track[1]
         self.cphi = test_track[2]
-        self.ck = test_track[3]
+        self.ck = smooth_yaw(test_track[3])
         self.speed = speed
         self.index = index
 
-        self.xref = None
+        self.xref = np.zeros((4, T+1))
     
     def calc_ref_trajectory(self, state):
         '''Simulates an online path planner by returning x_ref'''
@@ -47,7 +47,7 @@ class PathPlanner:
                 xref[0, i] = self.cx[ind + dind]
                 xref[1, i] = self.cy[ind + dind]
                 xref[2, i] = self.speed[ind + dind]
-                xref[3,i ] = self.cphi[ind + dind]
+                xref[3, i] = self.cphi[ind + dind]
                 dref[0, i] = 0.0
             else:
                 xref[0, i] = self.cx[n - 1]
@@ -68,7 +68,23 @@ class PathPlanner:
 
         return ind
 
-    def distance_to_go(self, state):
+    def get_park_flag(self, state):
         '''Calculate the # of course ticks left from current state to the goal'''
         ind = self.calc_nearest_index(state)
-        return len(self.cx[ind:])
+        dist_to_go = 0.0
+        for (x,y) in zip(self.cx[ind:], self.cy[ind:]):
+            dist_to_go += np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([x, y]))
+        
+        print('distance to go:\n {}'.format(dist_to_go))
+        if dist_to_go <= 10.0:
+            print('--------close to parking--------\n')
+            return True
+        else:
+            return False
+
+    def check_goal(self, state, goal):
+        distance = np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([goal]))
+        if distance <= 1.0 and abs(state.v) <= 0.1:
+            return True
+        else:
+            return False
