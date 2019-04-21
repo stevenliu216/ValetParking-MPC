@@ -7,8 +7,6 @@ from scipy.linalg import expm
 from .util import *
 from .parameters import *
 
-#### Parking Cost Matrices ####
-
 def update_vehicle_state(state, a, delta):
     '''Update Vehicle State based on mpc control output'''
     state.x = state.x + state.v * math.cos(state.phi) * DT
@@ -54,8 +52,6 @@ def linearize_kinematics_model_approx(v, phi, delta):
 
     return A, B, C
 
-
-
 def predict_motion(z0, opt_a, opt_d, zref):
     """Predicts future motion of vehicle at operational point"""
     # Initialize zbar
@@ -82,57 +78,107 @@ def linear_mpc(zref, zbar, z0, dref, park_flag):
     """ Linear MPC"""
     '''@TODO: adjust based on park_flag'''
     
+    if park_flag:
+        # Adjust the weights and constraints when parking
+        z = cvxpy.Variable((4, T + 1))
+        u = cvxpy.Variable((2, T))
 
-    z = cvxpy.Variable((4, T + 1))
-    u = cvxpy.Variable((2, T))
+        objective_func = 0.0
+        constraints = []
 
-    objective_func = 0.0
-    constraints = []
-
-    # Populate Objective/Cost Function and Constraints
-    for t in range(T):
-        # Obj/Cost Function Term 1
-        if t > 0:
-            objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q)
-        # Obj/Cost Function Term 3
-        objective_func += cvxpy.quad_form(u[:,t], R)
-    
-
-        # Obj/Cost Function Term 4
-        if t < (T - 1):
-            objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd)
-            constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <=
-                            MAX_DSTEER * DT]
-
-        A, B, C = linearize_kinematics_model_approx(zbar[2,t], zbar[3,t], dref)
-        constraints += [z[:,t+1] == A * z[:, t] + B * u[:, t] + C]
-    
-    # Obj/Cost Function Term 2
-    objective_func += cvxpy.quad_form(zref[:,T] - z[:,T], Qf)
-    constraints += [z[:, 0] == z0]
-    constraints += [z[2, :] <= MAX_V]
-    constraints += [z[2, :] >= MIN_V]
-    constraints += [cvxpy.abs(u[0, :]) <= MAX_ACCEL]
-    constraints += [cvxpy.abs(u[1, :]) <= MAX_DELTA]
-    
-    # Problem
-    problem = cvxpy.Problem(cvxpy.Minimize(objective_func), constraints)
-    problem.solve(solver=cvxpy.ECOS, verbose=False)
-
-
-    opt_control = control_input(a=0.0, delta=0.0)
-    opt_state = vehicle_state(x=0.0, y=0.0, v=0.0, phi =0.0)
-    # Solved Problem Results
-    if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
-        #populate results
-        print('solver status: {}'.format(problem.status))
-        opt_control.a = get_nparray_from_matrix(u.value[0, :])
-        opt_control.delta = get_nparray_from_matrix(u.value[1, :])
-        
-        opt_state.x = get_nparray_from_matrix(z.value[0, :])
-        opt_state.y =get_nparray_from_matrix(z.value[1, :])
-        opt_state.v = get_nparray_from_matrix(z.value[2, :])
-        opt_state.phi = get_nparray_from_matrix(z.value[3, :])
+        # Populate Objective/Cost Function and Constraints
+        for t in range(T):
+            # Obj/Cost Function Term 1
+            if t > 0:
+                objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q)
+            # Obj/Cost Function Term 3
+            objective_func += cvxpy.quad_form(u[:,t], R)
         
 
+            # Obj/Cost Function Term 4
+            if t < (T - 1):
+                objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd)
+                constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <=
+                                MAX_DSTEER * DT]
+
+            A, B, C = linearize_kinematics_model_approx(zbar[2,t], zbar[3,t], dref)
+            constraints += [z[:,t+1] == A * z[:, t] + B * u[:, t] + C]
+        
+        # Obj/Cost Function Term 2
+        objective_func += cvxpy.quad_form(zref[:,T] - z[:,T], Qf)
+        constraints += [z[:, 0] == z0]
+        constraints += [z[2, :] <= MAX_V]
+        constraints += [z[2, :] >= MIN_V]
+        constraints += [cvxpy.abs(u[0, :]) <= MAX_ACCEL]
+        constraints += [cvxpy.abs(u[1, :]) <= MAX_DELTA]
+        
+        # Problem
+        problem = cvxpy.Problem(cvxpy.Minimize(objective_func), constraints)
+        problem.solve(solver=cvxpy.ECOS, verbose=False)
+
+        opt_control = control_input(a=0.0, delta=0.0)
+        opt_state = vehicle_state(x=0.0, y=0.0, v=0.0, phi=0.0)
+        # Solved Problem Results
+        if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
+            #populate results
+            print('solver status: {}'.format(problem.status))
+            opt_control.a = get_nparray_from_matrix(u.value[0, :])
+            opt_control.delta = get_nparray_from_matrix(u.value[1, :])
+            
+            opt_state.x = get_nparray_from_matrix(z.value[0, :])
+            opt_state.y =get_nparray_from_matrix(z.value[1, :])
+            opt_state.v = get_nparray_from_matrix(z.value[2, :])
+            opt_state.phi = get_nparray_from_matrix(z.value[3, :])
+    else:
+        # Use different weights and constraintswhen driving normally
+        z = cvxpy.Variable((4, T + 1))
+        u = cvxpy.Variable((2, T))
+
+        objective_func = 0.0
+        constraints = []
+
+        # Populate Objective/Cost Function and Constraints
+        for t in range(T):
+            # Obj/Cost Function Term 1
+            if t > 0:
+                objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q)
+            # Obj/Cost Function Term 3
+            objective_func += cvxpy.quad_form(u[:,t], R)
+        
+
+            # Obj/Cost Function Term 4
+            if t < (T - 1):
+                objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd)
+                constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <=
+                                MAX_DSTEER * DT]
+
+            A, B, C = linearize_kinematics_model_approx(zbar[2,t], zbar[3,t], dref)
+            constraints += [z[:,t+1] == A * z[:, t] + B * u[:, t] + C]
+        
+        # Obj/Cost Function Term 2
+        objective_func += cvxpy.quad_form(zref[:,T] - z[:,T], Qf)
+        constraints += [z[:, 0] == z0]
+        constraints += [z[2, :] <= MAX_V]
+        constraints += [z[2, :] >= MIN_V]
+        constraints += [cvxpy.abs(u[0, :]) <= MAX_ACCEL]
+        constraints += [cvxpy.abs(u[1, :]) <= MAX_DELTA]
+        
+        # Problem
+        problem = cvxpy.Problem(cvxpy.Minimize(objective_func), constraints)
+        problem.solve(solver=cvxpy.ECOS, verbose=False)
+
+        opt_control = control_input(a=0.0, delta=0.0)
+        opt_state = vehicle_state(x=0.0, y=0.0, v=0.0, phi=0.0)
+        # Solved Problem Results
+        if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
+            #populate results
+            print('solver status: {}'.format(problem.status))
+            opt_control.a = get_nparray_from_matrix(u.value[0, :])
+            opt_control.delta = get_nparray_from_matrix(u.value[1, :])
+            
+            opt_state.x = get_nparray_from_matrix(z.value[0, :])
+            opt_state.y =get_nparray_from_matrix(z.value[1, :])
+            opt_state.v = get_nparray_from_matrix(z.value[2, :])
+            opt_state.phi = get_nparray_from_matrix(z.value[3, :])
+       
     return opt_control, opt_state

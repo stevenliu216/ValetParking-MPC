@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
+import logging
 
 from src.parameters import TARGET_SPEED, SHOW_PLOTS
 from src.simulator import simulate
 from src.util import *
 
 def main():
+
+    logging.basicConfig(filename='mpc.log', filemode='w', level=logging.INFO)
     # Step 1 - Generate a test track
     '''
     # Circular track
@@ -27,6 +30,7 @@ def main():
     xlist = [t/30 for t in xlist]
     ylist = [-t/30 for t in ylist] # image coordinates to cartesian
     test_track = get_test_track(xlist, ylist)
+    logging.info('Step 1 - Generating a test track')
     
     if SHOW_PLOTS:
         plt.figure(1, figsize=(12,8))
@@ -37,11 +41,14 @@ def main():
 
     # Step 2 - Generate a speed profile for test track
     speed = generate_speed_profile(test_track, TARGET_SPEED)
+    logging.info('Step 2 - Generating target speeds for test track')
+
     if SHOW_PLOTS:
         plt.subplot(2,3,4)
         
 
     # Step 3 - Run simulation
+    logging.info('Step 3 - Starting the simulation')
     simulated_result = \
         simulate(test_track, speed, dl=1.0)
 
