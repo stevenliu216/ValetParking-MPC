@@ -80,6 +80,7 @@ def get_nparray_from_matrix(x):
 
 def linear_mpc(zref, zbar, z0, dref, park_flag):
     """ Linear MPC"""
+    '''@TODO: adjust based on park_flag'''
     
 
     z = cvxpy.Variable((4, T + 1))

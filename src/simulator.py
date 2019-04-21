@@ -4,26 +4,8 @@ import matplotlib.pyplot as plt
 
 from .parameters import *
 from .path_planner import *
-from .mpc import linear_mpc, predict_motion
+from .mpc import *
 from .util import *
-
-def update_vehicle_state(state, a, delta):
-    '''Update Vehicle State based on mpc control output'''
-    state.x = state.x + state.v * math.cos(state.phi) * DT
-    state.y = state.y + state.v * math.sin(state.phi) * DT
-    
-    state.v = state.v + a * DT
-    # Limit vehicle speed to plausible max/min
-    state.v = max(min(state.v, MAX_V), MIN_V)
-
-    # Limit steering angle to maximum value
-    delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
-    state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
-    
-    return state
-
-def check_goal(goal):
-    return False
 
 def simulate(test_track, speed, dl):
     # Initialize the state
@@ -88,6 +70,8 @@ def simulate(test_track, speed, dl):
 
         # terminate if goal is reached (checkgoal())
         if path_planner.check_goal(state, goal):
+            print('=========reached goal=========\n')
+            plt.close()
             break
 
         # increment time

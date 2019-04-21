@@ -10,7 +10,7 @@ class PathPlanner:
         self.cx = test_track[0]
         self.cy = test_track[1]
         self.cphi = test_track[2]
-        self.ck = smooth_yaw(test_track[3])
+        self.ck = test_track[3]
         self.speed = speed
         self.index = index
 

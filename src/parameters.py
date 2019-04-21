@@ -21,7 +21,7 @@ MAX_DSTEER = np.deg2rad(30.0)
 L = 2.0
 
 #### Driving Cost Matrices ####
-Q = np.diag([1.0, 1.0, 0.5, 0.5]) # State Cost Matrix
+Q = np.diag([1.0, 1.0, 1.0, 1.0]) # State Cost Matrix
 Qf = Q # Final State Cost Matrix
 R = np.diag([0.1, 0.1]) # Control Input Cost Matrix
 Rd = np.diag([0.1, 0.5]) # Control Input Difference Cost Matrix
