@@ -67,9 +67,8 @@ class PathPlanner:
     def get_park_flag(self, state):
         '''Calculate the # of course ticks left from current state to the goal'''
         ind = self.calc_nearest_index(state)
-        dist_to_go = 0.0
-        for (x,y) in zip(self.cx[ind:], self.cy[ind:]):
-            dist_to_go += np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([x, y]))
+        dist_to_go = np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([self.cx[ind], self.cy[ind]]))
+        dist_to_go += len(self.cx[ind:])
         
         print('distance to go: \t\t{}'.format(dist_to_go))
         if dist_to_go <= 20.0:

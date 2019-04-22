@@ -75,7 +75,7 @@ def simulate(test_track, speed):
             logging.info('End configuration: \nx:{:2f} y:{:2f} v:{:2f} phi:{:2f}'\
                 .format(state.x, state.y, state.v, state.phi))
                 
-            plt.close()
+            #plt.close()
             break
 
         # increment time
