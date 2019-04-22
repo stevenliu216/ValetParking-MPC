@@ -2,6 +2,7 @@
 import math
 
 from .spline_interpolation import *
+from .parameters import DIST_TO_GOAL
 
 class vehicle_state:
     '''Represents the state of the vehicle'''
@@ -65,7 +66,7 @@ def get_park_test_track(xlistf, ylistf, xlistr, ylistr):
         ry2.append(iy)
         rphi2.append(sp.calc_phi(index))
         rk2.append(sp.calc_curvature(index))
-    rphi2 = smooth_yaw(rphi)
+    rphi2 = smooth_yaw(rphi2)
     rphi2 = [i - math.pi for i in rphi2]
 
     rx.extend(rx2)
@@ -92,7 +93,7 @@ def generate_speed_profile(test_track, target_speed):
             else:
                 direction = 1.0
         
-        if i >= (size_of_track-30):
+        if i >= (size_of_track-DIST_TO_GOAL):
             target_speed = 5.0 / 3.6
         
         if direction != 1.0:

@@ -17,7 +17,7 @@ def update_vehicle_state(state, a, delta):
     state.v = max(min(state.v, MAX_V_Abs), MIN_V_Abs)
 
     # Limit steering angle to maximum value
-    delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
+    delta = max(min(delta, MAX_DELTA), MIN_DELTA)
     state.phi = state.phi + (state.v * math.tan(delta) / L) * DT
     
     return state
@@ -171,9 +171,8 @@ def linear_mpc(zref, zbar, z0, dref, park_flag):
         opt_control = control_input(a=0.0, delta=0.0)
         opt_state = vehicle_state(x=0.0, y=0.0, v=0.0, phi=0.0)
         # Solved Problem Results
+        print('solver status: {}'.format(problem.status))
         if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
-            #populate results
-            print('solver status: {}'.format(problem.status))
             opt_control.a = get_nparray_from_matrix(u.value[0, :])
             opt_control.delta = get_nparray_from_matrix(u.value[1, :])
             

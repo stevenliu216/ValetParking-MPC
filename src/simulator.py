@@ -93,7 +93,7 @@ def simulate(test_track, speed):
         position_error.append(np.linalg.norm(np.asarray([state.x,state.y])-xref[0:2,0]))
 
         if SHOW_PLOTS:
-            plt.subplot(2,3,1)
+            plt.subplot(2,2,1)
             plt.cla()
             if opt_state.x is not None:
                 plt.plot(opt_state.x, opt_state.y, "c*", label="MPC")
@@ -105,30 +105,31 @@ def simulate(test_track, speed):
             plt.legend()
             plt.pause(0.001)
 
-            plt.subplot(2,3,4)
+            plt.subplot(2,2,4)
             plt.plot(speed_profile, '-b')
             plt.title('Speed Profile')
             plt.plot(v, '-r')
             plt.pause(0.001)
             
-            plt.subplot(2,3,2)
+            plt.subplot(2,2,2)
             plt.title('Heading Angle')
             plt.plot(phi, '--r', label='steering angle')
             plt.plot(phi_ref, '-b', label='reference angle')
-            
-            plt.subplot(2,3,5)
-            plt.title('Heading Angle RMSE')
-            plt.plot(phi_error, 'k')
-            plt.ylim(-1,5)
-
-            plt.subplot(2,3,3)
+                    
+            plt.subplot(2,2,3)
             plt.title('Trajectory zoomed in')
             plt.plot(x,y, "-rx", label = "Actual Position")
             plt.plot(position_refx,position_refy,"-bx", label = "Reference Position")
 
-            plt.subplot(2,3,6)
-            plt.title('Trajectory RMSE')
-            plt.plot(position_error, 'k')
-            plt.ylim(-1,5)
-
+    if SHOW_PLOTS:
+        plt.figure(2)  
+        plt.subplot(2,1,1)
+        plt.title('Heading Angle RMSE')
+        plt.plot(phi_error, 'k')
+        plt.ylim(-1,5)
+        
+        plt.subplot(2,1,2)
+        plt.title('Trajectory RMSE')
+        plt.plot(position_error, 'k')
+        plt.ylim(-1,5)
     return t, x, y, phi, v, a, delta

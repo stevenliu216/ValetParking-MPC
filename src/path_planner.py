@@ -2,8 +2,9 @@
 
 import numpy as np
 import math
+import logging
 
-from .parameters import DT, T, dl
+from .parameters import *
 
 class PathPlanner:
     def __init__(self, test_track, speed, index):
@@ -71,7 +72,8 @@ class PathPlanner:
         dist_to_go += len(self.cx[ind:])
         
         print('distance to go: \t\t{}'.format(dist_to_go))
-        if dist_to_go <= 20.0:
+        logging.info('distance to go:\n\t\t{}'.format(dist_to_go))
+        if dist_to_go <= DIST_TO_GOAL:
             print('--------close to parking--------\n')
             return True
         else:
