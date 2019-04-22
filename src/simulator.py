@@ -8,7 +8,7 @@ from .path_planner import *
 from .mpc import *
 from .util import *
 
-def simulate(test_track, speed, dl):
+def simulate(test_track, speed):
     logging.info('Running within simulation now')
     # Initialize the state
     state = vehicle_state(test_track[0][0], test_track[1][0], 0.0, test_track[2][0])

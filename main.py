@@ -50,7 +50,7 @@ def main():
     # Step 3 - Run simulation
     logging.info('Step 3 - Starting the simulation')
     simulated_result = \
-        simulate(test_track, speed, dl=1.0)
+        simulate(test_track, speed)
 
     # Step 4 - plot
     if SHOW_PLOTS:

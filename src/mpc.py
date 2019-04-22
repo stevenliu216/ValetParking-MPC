@@ -90,14 +90,14 @@ def linear_mpc(zref, zbar, z0, dref, park_flag):
         for t in range(T):
             # Obj/Cost Function Term 1
             if t > 0:
-                objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q)
+                objective_func += cvxpy.quad_form(zref[:,t] - z[:,t], Q_park)
             # Obj/Cost Function Term 3
-            objective_func += cvxpy.quad_form(u[:,t], R)
+            objective_func += cvxpy.quad_form(u[:,t], R_park)
         
 
             # Obj/Cost Function Term 4
             if t < (T - 1):
-                objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd)
+                objective_func += cvxpy.quad_form(u[:,t+1] - u[:,t], Rd_park)
                 constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <=
                                 MAX_DSTEER * DT]
 
@@ -105,7 +105,7 @@ def linear_mpc(zref, zbar, z0, dref, park_flag):
             constraints += [z[:,t+1] == A * z[:, t] + B * u[:, t] + C]
         
         # Obj/Cost Function Term 2
-        objective_func += cvxpy.quad_form(zref[:,T] - z[:,T], Qf)
+        objective_func += cvxpy.quad_form(zref[:,T] - z[:,T], Qf_park)
         constraints += [z[:, 0] == z0]
         constraints += [z[2, :] <= MAX_V]
         constraints += [z[2, :] >= MIN_V]
