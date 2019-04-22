@@ -14,7 +14,7 @@ def update_vehicle_state(state, a, delta):
     
     state.v = state.v + a * DT
     # Limit vehicle speed to plausible max/min
-    state.v = max(min(state.v, MAX_V), MIN_V)
+    state.v = max(min(state.v, MAX_V_Abs), MIN_V_Abs)
 
     # Limit steering angle to maximum value
     delta = max(min(delta, MAX_DELTA), -MIN_DELTA)
@@ -116,12 +116,13 @@ def linear_mpc(zref, zbar, z0, dref, park_flag):
         problem = cvxpy.Problem(cvxpy.Minimize(objective_func), constraints)
         problem.solve(solver=cvxpy.ECOS, verbose=False)
 
-        opt_control = control_input(a=0.0, delta=0.0)
+        opt_control = control_input(a=np.array([0.0,0.0]), delta=np.array([0.0,0.0]))
         opt_state = vehicle_state(x=0.0, y=0.0, v=0.0, phi=0.0)
+        print('solver status: {}'.format(problem.status))
         # Solved Problem Results
         if problem.status == cvxpy.OPTIMAL or problem.status == cvxpy.OPTIMAL_INACCURATE:
             #populate results
-            print('solver status: {}'.format(problem.status))
+            
             opt_control.a = get_nparray_from_matrix(u.value[0, :])
             opt_control.delta = get_nparray_from_matrix(u.value[1, :])
             

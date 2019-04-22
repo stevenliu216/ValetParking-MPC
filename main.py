@@ -25,7 +25,7 @@ def main():
     ylist = [-t/30 for t in ylist] # image coordinates to cartesian
     '''
 
-    '''
+    
     # Test forward parking
     # For this image, about 30 pixels = 1 meter
     xlist = [1825.42, 1602.18, 1180.32, 975.14, 858.6, 715.79, 628.79, 563.14, 540.16, 527.02, 528.67, 530.31, 528.67]
@@ -49,7 +49,7 @@ def main():
 
     xlist = xlistf + xlistr
     ylist = xlistf + ylistr
-
+    '''
     logging.info('Step 1 - Generating a test track')
     
     if SHOW_PLOTS:

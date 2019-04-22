@@ -91,10 +91,10 @@ def generate_speed_profile(test_track, target_speed):
                 direction = -1.0
             else:
                 direction = 1.0
-        '''
+        
         if i >= (size_of_track-30):
             target_speed = 5.0 / 3.6
-        '''
+        
         if direction != 1.0:
             speed_profile[i] = -target_speed
         else:
