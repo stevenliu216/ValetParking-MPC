@@ -23,14 +23,10 @@ class PathPlanner:
         n = len(self.cx)
 
         ind = self.calc_nearest_index(state)
-        print('self.index: {}'.format(self.index))
-        print('ind: {}'.format(ind))
         if self.index >= ind:
             ind = self.index
 
         self.index = ind
-        print('self.index: {}'.format(self.index))
-        print('ind: {}'.format(ind))
 
         xref[0,0] = self.cx[ind]
         xref[1,0] = self.cy[ind]
@@ -75,8 +71,8 @@ class PathPlanner:
         for (x,y) in zip(self.cx[ind:], self.cy[ind:]):
             dist_to_go += np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([x, y]))
         
-        print('distance to go:\n {}'.format(dist_to_go))
-        if dist_to_go <= 10.0:
+        print('distance to go: \t\t{}'.format(dist_to_go))
+        if dist_to_go <= 20.0:
             print('--------close to parking--------\n')
             return True
         else:
@@ -84,7 +80,7 @@ class PathPlanner:
 
     def check_goal(self, state, goal):
         distance = np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([goal]))
-        if distance <= 1.0 and abs(state.v) <= 0.1:
+        if distance <= 0.5 and abs(state.v) <= 0.1:
             return True
         else:
             return False
