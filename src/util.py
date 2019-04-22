@@ -1,4 +1,5 @@
 '''Defines state, control classes'''
+import math
 
 from .spline_interpolation import *
 
@@ -37,6 +38,42 @@ def get_test_track(xlist, ylist):
     rphi = smooth_yaw(rphi)
     return rx, ry, rphi, rk
 
+def get_park_test_track(xlistf, ylistf, xlistr, ylistr):
+    '''Returns a test track consisting of (x, y, phi, k) for each course tick
+        inputs: xlist, ylist are lists of waypoint coordinates
+    '''
+    ds = 1  # Let ds be the course tick
+    sp = Spline2D(xlistf, ylistf)
+    s = list(np.arange(0, sp.s[-1], ds))
+
+    rx, ry, rphi, rk = [], [], [], []
+    for index in s:
+        ix, iy = sp.calc_position(index)
+        rx.append(ix)
+        ry.append(iy)
+        rphi.append(sp.calc_phi(index))
+        rk.append(sp.calc_curvature(index))
+    rphi = smooth_yaw(rphi)
+
+    sp = Spline2D(xlistr, ylistr)
+    s = list(np.arange(0, sp.s[-1], ds))
+
+    rx2, ry2, rphi2, rk2 = [], [], [], []
+    for index in s:
+        ix, iy = sp.calc_position(index)
+        rx2.append(ix)
+        ry2.append(iy)
+        rphi2.append(sp.calc_phi(index))
+        rk2.append(sp.calc_curvature(index))
+    rphi2 = smooth_yaw(rphi)
+    rphi2 = [i - math.pi for i in rphi2]
+
+    rx.extend(rx2)
+    ry.extend(ry2)
+    rphi.extend(rphi2)
+    rk.extend(rk2)
+    return rx, ry, rphi, rk
+
 def generate_speed_profile(test_track, target_speed):
     '''Simulates an online path planner by return a target speed for each tick'''
     size_of_track = len(test_track[0])
@@ -54,10 +91,10 @@ def generate_speed_profile(test_track, target_speed):
                 direction = -1.0
             else:
                 direction = 1.0
-        
+        '''
         if i >= (size_of_track-30):
             target_speed = 5.0 / 3.6
-
+        '''
         if direction != 1.0:
             speed_profile[i] = -target_speed
         else:

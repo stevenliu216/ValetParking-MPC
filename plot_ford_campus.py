@@ -5,7 +5,8 @@ import matplotlib.image as mpimg
 
 import src.util as u
 
-img = mpimg.imread('ford_campus.png')
+#img = mpimg.imread('ford_campus.png')
+img = mpimg.imread('ford_parking_lot.png')
 
 def run(n):
     '''Click waypoints and get list of x and y coordinates'''

@@ -93,7 +93,6 @@ def simulate(test_track, speed):
         position_error.append(np.linalg.norm(np.asarray([state.x,state.y])-xref[0:2,0]))
 
         if SHOW_PLOTS:
-            #plt.subplot(2,3,3)
             plt.subplot(2,3,1)
             plt.cla()
             if opt_state.x is not None:
