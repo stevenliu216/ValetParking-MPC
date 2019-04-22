@@ -13,10 +13,8 @@ TARGET_SPEED = 10.0 / 3.6
 
 MIN_V_Abs = -20.0 / 3.6
 MAX_V_Abs = 30.0 / 3.6
-MIN_V = -20.0 / 3.6
+MIN_V = -10.0 / 3.6
 MAX_V = 10.0 / 3.6
-MIN_V_park= -5.0 / 3.6
-MAX_V_park = 5.0 / 3.6
 MIN_DELTA = -np.deg2rad(45.0)
 MAX_DELTA = np.deg2rad(45.0)
 MAX_ACCEL = 1.0

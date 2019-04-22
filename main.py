@@ -25,7 +25,7 @@ def main():
     ylist = [-t/9 for t in ylist] # image coordinates to cartesian
     '''
 
-    '''
+    
     # Test forward parking
     # For this image, about 30 pixels = 1 meter
     xlist = [1825.42, 1602.18, 1180.32, 975.14, 858.6, 715.79, 628.79, 563.14, 540.16, 527.02, 528.67, 530.31, 528.67]
@@ -33,23 +33,23 @@ def main():
     xlist = [t/30 for t in xlist]
     ylist = [-t/30 for t in ylist]
     test_track = get_test_track(xlist, ylist)
-    '''
     
+    '''
     #forward part
-    xlistf = [1664.54, 1209.05, 898.42, 674.7, 423.62]
-    ylistf = [261.46, 258.24, 258.24, 264.68, 359.64]
+    xlistf = [1815.52, 1422.34, 1166.84, 948.24, 843.21, 695.58, 634.55, 593.39, 559.32, 536.61, 529.51, 528.09]
+    ylistf = [272.71, 279.81, 275.55, 267.04, 255.68, 255.68, 265.62, 276.97, 296.84, 330.91, 382.01, 386.27]
     xlistf = [t/30 for t in xlistf]
     ylistf = [-t/30 for t in ylistf]
     #reverse part
-    xlistr = [423.62, 505.96, 528.93, 527.49, 526.06]
-    ylistr = [359.64, 296.15, 252.98, 224.27, 192.68]
+    xlistr = [528.09, 521.01, 521.01, 521.01]
+    ylistr = [386.27, 306.94, 214.55, 122.16]
     xlistr = [t/30 for t in xlistr]
     ylistr = [-t/30 for t in ylistr]
 
     test_track = get_park_test_track(xlistf, ylistf, xlistr, ylistr)
     xlist = xlistf + xlistr
     ylist = ylistf + ylistr
-    
+    '''
     logging.info('Step 1 - Generating a test track')
     
     if SHOW_PLOTS:

@@ -30,6 +30,7 @@ def simulate(test_track, speed):
     position_refx = []
     position_refy = []
     position_error = []
+    steering_angle_roc = []
 
     a = 0.0
     delta = 0.0
@@ -58,6 +59,7 @@ def simulate(test_track, speed):
         park_flag = path_planner.get_park_flag(state)
 
         # iterative linear mpc every time loop
+        pdelta = delta
         opt_control, opt_state = linear_mpc(xref, xbar, x0, 0.0, park_flag)
         logging.info('\nMPC control: \n a: {}, \n delta: {}'.format(opt_control.a, opt_control.delta))
         logging.info('\nMPC states: \n x: {}, \n y:{}'.format(opt_state.x, opt_state.y))
@@ -66,6 +68,8 @@ def simulate(test_track, speed):
         a = opt_control.a[0]
         delta = opt_control.delta[0]
         state = update_vehicle_state(state, a, delta)
+        steering_angle_roc.append(delta - pdelta)
+
 
         # terminate if goal is reached (checkgoal())
         if path_planner.check_goal(state, goal):
@@ -132,4 +136,19 @@ def simulate(test_track, speed):
         plt.title('Trajectory RMSE')
         plt.plot(position_error, 'k')
         plt.ylim(-1,5)
-    return t, x, y, phi, v, a, delta
+
+        plt.figure(3)
+        plt.subplot(2,1,1)
+        plt.title('Speed Envelope')
+        plt.plot(v, '-r')
+        plt.plot(range(len(v)), [MIN_V]*len(v), '--b')
+        plt.plot(range(len(v)), [MAX_V]*len(v), '--b')
+
+        plt.subplot(2,1,2)
+        plt.title('Steering Angle rate of change')
+        plt.plot(steering_angle_roc, '-r')
+        plt.plot(range(len(steering_angle_roc)), [-MAX_DSTEER]*len(steering_angle_roc), '--b')
+        plt.plot(range(len(steering_angle_roc)), [MAX_DSTEER]*len(steering_angle_roc), '--b')
+
+
+    return t, x, y, phi, v, a, delta, position_error, phi_error
