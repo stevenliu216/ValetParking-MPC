@@ -9,13 +9,15 @@ python3 -m venv eecs561
 source eecs561/bin/activate
 ```
 
-Install dependencies and run:
+Install dependencies:
 ```
 cd ${your desired directory for this project}
 git clone https://github.com/stevenliu216/EECS561-final-project.git
 pip install -r requirements.txt
+```
 
 # Run the code
+```
 python main.py
 ```
 
