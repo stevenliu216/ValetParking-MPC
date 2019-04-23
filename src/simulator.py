@@ -78,6 +78,8 @@ def simulate(test_track, speed):
             logging.info('Desired goal: \nx:{:2f} y:{:2f}'.format(goal[0], goal[1]))
             logging.info('End configuration: \nx:{:2f} y:{:2f} v:{:2f} phi:{:2f}'\
                 .format(state.x, state.y, state.v, state.phi))
+            distance = np.linalg.norm(np.asarray([state.x,state.y]) - np.asarray([goal]))
+            logging.info('\nFinal distance to goal: {:2f}'.format(distance))
                 
             #plt.close()
             break
@@ -123,7 +125,7 @@ def simulate(test_track, speed):
             plt.subplot(2,2,3)
             plt.title('Trajectory zoomed in')
             plt.plot(x,y, "-rx", label = "Actual Position")
-            plt.plot(position_refx,position_refy,"-bx", label = "Reference Position")
+            plt.plot(position_refx, position_refy,"-bx", label = "Reference Position")
 
     if SHOW_PLOTS:
         plt.figure(2)  

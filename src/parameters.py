@@ -8,7 +8,7 @@ SHOW_PLOTS = True
 T = 8       # horizon length
 DT = 0.2    # time increment
 dl = 1.0    # course tick
-MAX_TIME = 60.0
+MAX_TIME = 200.0
 TARGET_SPEED = 10.0 / 3.6
 
 MIN_V_Abs = -20.0 / 3.6
