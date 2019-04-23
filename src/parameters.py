@@ -29,7 +29,14 @@ Qf = np.diag([1.0, 1.0, 0.25, 0.5]) # Final State Cost Matrix
 R = np.diag([0.1, 0.1]) # Control Input Cost Matrix
 Rd = np.diag([0.1, 0.5]) # Control Input Difference Cost Matrix
 
+# Q2 weights
 Q_park = np.diag([2.0, 2.0, 5.0, 0.1]) # State Cost Matrix
 Qf_park = np.diag([2.0, 2.0, 5.0, 0.1]) # Final State Cost Matrix
 R_park = np.diag([0.1, 0.1]) # Control Input Cost Matrix
 Rd_park = np.diag([0.1, 1.0]) # Control Input Difference Cost Matrix
+
+'''
+# Q1 weights - uncomment these to test with Q1
+Q_park = np.diag([1.0, 1.0, 0.1, 0.1]) # State Cost Matrix
+Qf_park = np.diag([1.0, 1.0, 0.1, 0.1]) # Final State Cost Matrix
+'''

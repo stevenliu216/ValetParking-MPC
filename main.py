@@ -64,8 +64,8 @@ def main():
     # t, x, y, phi, v, a, delta, position_error, phi_error
     avg_position_error = sum(simulated_result[7])/len(simulated_result[7])
     avg_rotation_error = sum(simulated_result[8])/len(simulated_result[8])
-    logging.info('Average Position Error: \n'.format(avg_position_error))
-    logging.info('Average Rotation Error: \n'.format(avg_rotation_error))
+    logging.info('Average Position error: \n {}'.format(avg_position_error))
+    logging.info('Average Rotation error: \n {}'.format(avg_rotation_error))
 
     # Step 5 - plot
     if SHOW_PLOTS:
