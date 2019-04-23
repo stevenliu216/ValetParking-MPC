@@ -21,3 +21,14 @@ python main.py
 
 ## Diagram
 ![Diagram](doc/diagram.png)
+
+## References
+We referenced Atsushi Sakai's PythonRobotics repository for example codes for implementing MPC control in python.
+```
+@misc{PythonRobotics,
+Author = {Atsushi Sakai and Daniel Ingram and Joseph Dinius and Karan Chawla and Antonin Raffin and Alexis Paques},
+Title = {PythonRobotics: a Python code collection of robotics algorithms},
+Year = {2018},
+Eprint = {arXiv:1808.10703},
+}
+```
