@@ -1,4 +1,6 @@
-## MPC for Automated Valet Parking [![Build Status](https://travis-ci.com/stevenliu216/EECS561-final-project.svg?token=nsybZNLKNQxgq5LiqTqf&branch=master)](https://travis-ci.com/stevenliu216/EECS561-final-project)
+## MPC for Automated Valet Parking
+[![Build Status](https://travis-ci.com/stevenliu216/EECS561-final-project.svg?token=nsybZNLKNQxgq5LiqTqf&branch=master)](https://travis-ci.com/stevenliu216/EECS561-final-project)
+
 Our EECS 561 (Digital Controls) final project.
 
 ## Setup
